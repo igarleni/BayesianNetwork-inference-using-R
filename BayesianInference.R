@@ -110,3 +110,32 @@ T.prob <- array(c(0.48, 0.42, 0.10, 0.56, 0.36, 0.08, 0.58,
 ###############################
 ## Bayesian Network creation ##
 ###############################
+
+##Create bayesian network
+#First, add probabilities to a list
+cpt <- list(A=A.prob, S=S.prob, E=E.prob, O=O.prob,
+            R=R.prob, T=T.prob)
+#then, combine with DAG to create
+bn <- custom.fit(dag1,cpt)
+
+##tools
+#Show number of parameters on Bayesian Network
+nparams(bn)
+#show arcs on his DAG
+arcs(bn)
+#Show parameters of an specific variable
+bn$R
+#Extract conditional probability distribution of a variable
+# from Bayesian Network (note that its the same as R.prob)
+R.cpt = coef(bn$R)
+#Show every conditional probability distribution of this
+# bayesian network
+bn
+
+
+#################################################################
+## Parameter estimation:  conditional probability distribution ##
+#################################################################
+
+
+
