@@ -145,7 +145,8 @@ survey <- read.table("survey.txt", header = TRUE)
 ## We use MLE method (maximun likelihood)
 bn.mle <- bn.fit(dag1, data = survey, method = "mle")
 ## Or we can also use Bayes
-bn.bayes <- bn.fit(dag1, data = survey, method = "bayes",iss = 10)
+bn.bayes <- bn.fit(dag1, data = survey, method = "bayes",
+                   iss = 10)
 
 ##Its possible to calculate each variable manually
 # For example, P(O|E)
@@ -189,6 +190,7 @@ dsep(dag1, x="S", y="T",z=c("O", "R"))
 
 ##Check if there is a directed path between to variables
 path(dag1 , from = "S", to = "R")
+
 
 #########
 ## Exact inference
@@ -237,5 +239,31 @@ querygrain(jedu, nodes = c("S", "T"), type = "conditional")
 
 ##############
 ## Approximate inference
+
+##Logical sampling
+# S = "M", T = "car"  for P(S = "M",T = "car"|E = "high")
+cpquery(bn, event = (S == "M") & (T == "car"), 
+        evidence = (E == "high"))
+##Its possible to  the aproximation by modifying the n value.
+# This value represents the number of random samples we use
+cpquery(bn, event = (S == "M") & (T == "car"), 
+        evidence = (E == "high"), n = 1000000)
+
+##We can also use a different method, likelihood weighting.
+# The logical sampling doesnt works well with low probabilities,
+# so we can use this one.
+cpquery(bn, event = (S == "M") & (T == "car"),
+        evidence = list(E = "high"), method = "lw")
+
+##gRain let us make more complex queries, like this one
+# P(S = "M", T = "car"|{A = "young",E = "uni"}U{A = "adult"})
+cpquery(bn, event = (S == "M") & (T == "car"),
+        evidence = ((A == "young") & (E == "uni"))
+        | (A == "adult"))
+
+##Create samples that let this evidence take place. This samples
+# have ocurrences of nodes
+SxT <- cpdist(bn, nodes = c("S", "T"),
+              evidence = (E == "high"))
 
 
