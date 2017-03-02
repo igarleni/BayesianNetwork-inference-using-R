@@ -75,7 +75,7 @@ graphviz.plot(dag1)
 ## Probability especification ##
 ################################
 
-##Establis variable domains
+##Establish variable domains
 A.st <- c("young", "adult", "old")
 S.st <- c("M", "F")
 E.st <- c("high", "uni")
@@ -265,5 +265,3 @@ cpquery(bn, event = (S == "M") & (T == "car"),
 # have ocurrences of nodes
 SxT <- cpdist(bn, nodes = c("S", "T"),
               evidence = (E == "high"))
-
-
