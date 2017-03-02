@@ -145,7 +145,7 @@ survey <- read.table("survey.txt", header = TRUE)
 ## We use MLE method (maximun likelihood)
 bn.mle <- bn.fit(dag1, data = survey, method = "mle")
 ## Or we can also use Bayes
-bn.bayes <- bn.fit(dag, data = survey, method = "bayes",iss = 10)
+bn.bayes <- bn.fit(dag1, data = survey, method = "bayes",iss = 10)
 
 ##Its possible to calculate each variable manually
 # For example, P(O|E)
@@ -157,5 +157,85 @@ bn.mle$O
 ####################################
 ## Learning DAG: Tests and Scores ##
 ####################################
+
+##Estimate DAG using survey dataset, using
+## Hill-Climbing method (hc)
+learned1 <- hc(survey)
+modelstring(learned1)
+score(learned1, data = survey, type = "bic")
+
+##Estimate DAG using survey dataset, using
+## Hill-Climbing method (hc)
+learned2 <- hc(survey, score = "bde")
+modelstring(learned2)
+
+
+####################################
+## Inference on Bayesian Networks ##
+####################################
+
+#####################
+## Obtaining independencies showed on DAG
+
+##Check dependencies between two variables. True = independent,
+## False = dependent
+dsep(dag1, x = "S", y = "R")
+
+##Chek dependencies, contitioning by knowing a third variable
+dsep(dag1, x = "S", y = "R", z = "E")
+
+##Chek dependencies, contitioning by knowing a set of variables
+dsep(dag1, x="S", y="T",z=c("O", "R"))
+
+##Check if there is a directed path between to variables
+path(dag1 , from = "S", to = "R")
+
+#########
+## Exact inference
+
+##Needs librares download
+source("http://bioconductor.org/biocLite.R")
+biocLite(c("graph","RBGL","Rgraphviz"))
+#install.packages("gRain")
+
+##
+library(gRain)
+
+##Convert our Bayesian Network into a grain item type
+junction <- compile(as.grain(bn))
+
+##Get probability distribution, posteriori way
+querygrain(junction, nodes="T")$T
+
+##Set new evidence and show probabilities distribution
+## evidente --> S = F, watch its influence on T 
+## P(T|S = "F")
+jsex <- setEvidence(junction, nodes="S", states="F")
+querygrain(jsex,nodes="T")$T
+
+##Set another evidence
+## R = "small", watch its influence on T
+## P(T|R = "small")
+jres <- setEvidence(junction, nodes = "R", states = "small")
+querygrain(jsex,nodes="T")$T
+
+##E = "high", watch its influence on S and T
+# P(S,T|R = "high")
+jedu <- setEvidence(junction, nodes = "E", states = "high")
+
+# Check its influence in 2 combined variables
+querygrain(jedu, nodes = c("S", "T"), type = "joint")
+
+# Check influence on 2 variables, but separated (marginal)
+# P(S|E = "high") and P(T|E = "high")
+querygrain(jedu, nodes = c("S", "T"), type = "marginal")
+
+# Check its influence on both conditional
+# P(S|T,E = "high") and P(T|S,E = "high")
+querygrain(jedu, nodes = c("S", "T"), type = "conditional")
+
+
+##############
+## Approximate inference
 
 
