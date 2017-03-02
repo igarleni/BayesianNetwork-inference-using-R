@@ -56,3 +56,17 @@ modelstring(dag1)
 #show arcs
 arcs(dag1)
 
+
+#######################
+## DAG visualization ##
+#######################
+
+##simple plot DAG
+plot(dag1)
+
+##Rgraphviz plot, need library download
+source("http://bioconductor.org/biocLite.R")
+biocLite("Rgraphviz")
+graphviz.plot(dag1)
+#this plot function sort nodes by reducing arcs and nodes overlap
+
