@@ -137,5 +137,25 @@ bn
 ## Parameter estimation:  conditional probability distribution ##
 #################################################################
 
+##Read survey file
+survey <- read.table("survey.txt", header = TRUE)
+
+##Now we associate this dataset to our DAG, to obtain
+## the conditional probability distribution
+## We use MLE method (maximun likelihood)
+bn.mle <- bn.fit(dag1, data = survey, method = "mle")
+## Or we can also use Bayes
+bn.bayes <- bn.fit(dag, data = survey, method = "bayes",iss = 10)
+
+##Its possible to calculate each variable manually
+# For example, P(O|E)
+prop.table(table(survey[, c("O", "E")]), margin = 2)
+# Its the same as before
+bn.mle$O
+
+
+####################################
+## Learning DAG: Tests and Scores ##
+####################################
 
 
